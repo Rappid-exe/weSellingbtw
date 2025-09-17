@@ -7,7 +7,7 @@ app.use(express.json());
 app.post("/generate", (req, res) => {
   const profile = mockProfile;
   res.json({
-    message: "Mock profile used",
+    message: "test profile",
     data: profile
   });
 });
