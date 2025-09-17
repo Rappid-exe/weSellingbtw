@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 dotenv.config();
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-const VOICE_ID = "agent_8001k5ca36xmf3n821wgdqnsk3w6"; 
+const VOICE_ID = "ZhWoHkkpUwKxpxd71VWe"; 
 
 export async function generateVoice(text: string): Promise<Buffer> {
   try {
