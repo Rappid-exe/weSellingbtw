@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import { mockProfile } from "./profile";
 import { getAngleAgent } from "./response";
 import { generateVoice } from "./voice";
@@ -6,25 +7,28 @@ import { generateVoice } from "./voice";
 const app = express();
 app.use(express.json());
 
-app.post("/generate", async (req, res) => {
-  try {
-    const response = await getAngleAgent(mockProfile);
+// Serve static audio files
+app.use('/audio', express.static(path.join(__dirname, 'public', 'audio')));
 
-    res.send(response);
+app.post("/api/outreach", async (req, res) => {
+  try {
+    // Step 1: Generate email text
+    const emailText = await getAngleAgent(mockProfile);
+    
+    // Step 2: Generate audio using the email text
+    const audioFilename = await generateVoice(emailText);
+    
+    // Step 3: Construct the full public URL
+    const audioUrl = `http://localhost:3000/audio/${audioFilename}`;
+    
+    // Step 4: Return unified JSON response
+    res.status(200).json({
+      email: emailText,
+      audioUrl: audioUrl
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("fail to gen res");
-  }
-});
-
-app.post("/speak", async (req, res) => {
-  try {
-    const text = await getAngleAgent(mockProfile);   
-    const audioBuffer = await generateVoice(text);    
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.send(audioBuffer);                          
-  } catch (err) {
-    res.status(500).send("fail to gen voice");
+    console.error("Error generating outreach:", error);
+    res.status(500).json({ error: "Failed to generate outreach" });
   }
 });
 

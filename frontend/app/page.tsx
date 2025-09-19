@@ -26,7 +26,7 @@ export default function Home() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/generate', {
+      const response = await fetch('/api/outreach', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,11 +42,10 @@ export default function Home() {
 
       const data = await response.json();
       
-      // For now, using mock data since backend returns different structure
-      // TODO: Update when backend implements actual email/audio generation
+      // Use the actual response from the unified backend endpoint
       setResult({
-        email: `Hi there,\n\nI hope this message finds you well. I came across your LinkedIn profile and was impressed by your professional background and recent posts.\n\nI'd love to discuss how our solutions could help you and your organization achieve even greater success. Would you be available for a brief call this week?\n\nBest regards,\nSales Team`,
-        audioUrl: '/generated-audio/output.mp3'
+        email: data.email,
+        audioUrl: data.audioUrl
       });
     } catch (err) {
       setError('Failed to generate outreach. Please try again.');
