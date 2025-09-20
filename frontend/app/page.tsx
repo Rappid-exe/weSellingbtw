@@ -9,6 +9,7 @@ interface ApiResponse {
 
 export default function Home() {
   const [linkedinProfile, setLinkedinProfile] = useState<string>('');
+  const [productDescription, setProductDescription] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -21,18 +22,24 @@ export default function Home() {
       return;
     }
 
+    if (!productDescription.trim()) {
+      setError('Product/Service description is required.');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const response = await fetch('/api/outreach', {
+      const response = await fetch('/api/test-apify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           linkedinProfile: linkedinProfile.trim(),
+          productDescription: productDescription.trim(),
         }),
       });
 
@@ -84,10 +91,31 @@ export default function Home() {
               id="linkedinProfile"
               value={linkedinProfile}
               onChange={(e) => setLinkedinProfile(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
               placeholder="https://www.linkedin.com/in/username"
               required
             />
+          </div>
+
+          <div>
+            <label htmlFor="productDescription" className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              What are you selling? *
+            </label>
+            <textarea
+              id="productDescription"
+              value={productDescription}
+              onChange={(e) => setProductDescription(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors resize-none text-gray-900 placeholder-gray-400"
+              placeholder="Describe your product/service, target audience, and key benefits. E.g., 'AI-powered sales automation platform that helps B2B teams increase conversion rates by 40% through personalized outreach sequences.'"
+              rows={4}
+              required
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Be specific about your product, who it helps, and the main benefits. This will be used to create highly targeted outreach.
+            </p>
           </div>
 
           <button

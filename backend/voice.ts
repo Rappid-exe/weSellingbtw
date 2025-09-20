@@ -7,10 +7,14 @@ import { v4 as uuidv4 } from "uuid";
 dotenv.config();
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-const VOICE_ID = "ZhWoHkkpUwKxpxd71VWe"; 
+const VOICE_ID = "UgBBYS2sOqTuMpoF3BR0"; 
 
 export async function generateVoice(text: string): Promise<string> {
   try {
+    console.log("ElevenLabs: Generating voice for text length:", text.length);
+    console.log("ElevenLabs: Using voice ID:", VOICE_ID);
+    console.log("ElevenLabs: API key starts with:", ELEVENLABS_API_KEY?.substring(0, 10) + "...");
+    
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
       method: "POST",
       headers: {
@@ -27,7 +31,13 @@ export async function generateVoice(text: string): Promise<string> {
     });
 
     if (!response.ok) {
-      throw new Error(`ElevenLabs API error: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error("ElevenLabs API Error Details:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+      throw new Error(`ElevenLabs API error: ${response.statusText} - ${errorText}`);
     }
 
     const arrayBuffer = await response.arrayBuffer();
